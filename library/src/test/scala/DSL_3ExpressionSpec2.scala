@@ -138,7 +138,7 @@ class DSL_3ExpressionSpec2 extends DSLSpec { def is =                         s2
     )
     
   def for1 =
-    FOR(VALFROM("i") := LIT(0) INT_TO LIT(2)) DO(
+    FOR(VALFROM(ID("i")) <-- (LIT(0) INT_TO LIT(2))) DO(
       Predef_println APPLY LIT("Hello")
     ) must print_as(
       """for (i <- 0 to 2)""",
@@ -147,7 +147,7 @@ class DSL_3ExpressionSpec2 extends DSLSpec { def is =                         s2
 
   def for2 =
     FOR(
-      VALFROM("i") := LIT(0) INT_TO LIT(2),
+      VALFROM(ID("i")) <-- (LIT(0) INT_TO LIT(2)),
       IF(REF("x") INT_< LIT(10))
     ) DO(
       Predef_println APPLY LIT("Hello")
@@ -160,8 +160,8 @@ class DSL_3ExpressionSpec2 extends DSLSpec { def is =                         s2
 
   def for3 =
     FOR(
-      VALFROM("i") := LIT(0) INT_TO LIT(2),
-      VAL("x") := REF("i")
+      VALFROM(ID("i")) <-- (LIT(0) INT_TO LIT(2)),
+      VALDEF(ID("x")) := REF("i")
     ) DO(
       Predef_println APPLY LIT("Hello")
     ) must print_as(
@@ -172,7 +172,7 @@ class DSL_3ExpressionSpec2 extends DSLSpec { def is =                         s2
     )
 
   def for4 =
-    FOR(VALFROM("i") := LIT(0) INT_TO LIT(2)) YIELD REF("i") must print_as(
+    FOR(VALFROM(ID("i")) <-- (LIT(0) INT_TO LIT(2))) YIELD REF("i") must print_as(
       """for (i <- 0 to 2)""",
       """  yield i"""
     )

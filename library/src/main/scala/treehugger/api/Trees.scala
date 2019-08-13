@@ -700,16 +700,16 @@ trait Trees { self: Universe =>
   
   // for (P_1 <- G; P_2 = E_2; if E_3; ...)
   sealed trait Enumerator extends Tree { def pos: Position }
-  case class ForValFrom(override val pos: Position, name: TermName, tpt: Tree, rhs: Tree) extends ValOrDefDef with Enumerator {
+  case class ForValFrom(override val pos: Position, valDecl: Tree, rhs: Tree) extends Enumerator {
     def mods = Modifiers()
   }
-  case class ForValDef(override val pos: Position, name: TermName, tpt: Tree, rhs: Tree) extends ValOrDefDef with Enumerator {
+  case class ForValDef(override val pos: Position, valDecl: Tree, rhs: Tree) extends Enumerator {
     def mods = Modifiers()
   }
   case class ForFilter(override val pos: Position, test: Tree) extends Enumerator
   
-  def ForValFrom(name: TermName, tpt: Tree, rhs: Tree): ForValFrom = ForValFrom(NoPosition, name, tpt, rhs)
-  def ForValDef(name: TermName, tpt: Tree, rhs: Tree): ForValDef = ForValDef(NoPosition, name, tpt, rhs)
+  def ForValFrom(valDecl: Tree, rhs: Tree): ForValFrom = ForValFrom(NoPosition, valDecl, rhs)
+  def ForValDef(valDecl: Tree, rhs: Tree): ForValDef = ForValDef(NoPosition, valDecl, rhs)
   def ForFilter(test: Tree): ForFilter = ForFilter(NoPosition, test)
   
   case class ForTree(enums: List[Enumerator], body: Tree) extends Tree
@@ -841,9 +841,11 @@ trait Trees { self: Universe =>
         traverseTrees(enums); traverse(body)
       case ForYieldTree(enums, body) =>
         traverseTrees(enums); traverse(body)
-      case ForValFrom(_, _, _, rhs) =>
+      case ForValFrom(_, lhs, rhs) =>
+        traverse(lhs)
         traverse(rhs)
-      case ForValDef(_, _, _, rhs) =>
+      case ForValDef(_, lhs, rhs) =>
+        traverse(lhs)
         traverse(rhs)
       case ForFilter(_, test: Tree) =>
         traverse(test)

@@ -486,8 +486,11 @@ trait TreehuggerDSLs { self: Forest =>
       // def ARGNAMES = ARGS map Ident
     }
     
-    class ForValFromStart(val name: Name) extends TreeVODDStart[ForValFrom] {
-      def mkTree(rhs: Tree): ForValFrom = ForValFrom(name, tpt, rhs)
+    class ForValFromStart(val varDecl: Tree) {
+      def <--(rhs: Tree): ForValFrom = ForValFrom(varDecl, rhs)
+    }
+    class ForValDefStart(val varDecl: Tree) {
+      def :=(rhs: Tree): ForValDef = ForValDef(varDecl, rhs)
     }
     
     trait ParentsStart {
@@ -721,8 +724,8 @@ trait TreehuggerDSLs { self: Forest =>
     def LAZYVAL(sym: Symbol, tp: Type): ValSymStart = VAL(sym, tp) withFlags Flags.LAZY
     def LAZYVAL(sym: Symbol): ValSymStart           = VAL(sym) withFlags Flags.LAZY
 
-    def VALFROM(name: Name, tp: Type): ForValFromStart = VALFROM(name) withType tp
-    def VALFROM(name: Name): ForValFromStart           = new ForValFromStart(name)
+    def VALFROM(valDecl: Tree): ForValFromStart           = new ForValFromStart(valDecl)
+    def VALDEF(valDecl: Tree): ForValDefStart           = new ForValDefStart(valDecl)
 
     def CLASSDEF(name: Name): ClassDefStart         = new ClassDefStart(name.toTypeName)
     def CLASSDEF(sym: Symbol): ClassDefStart        = new ClassDefStart(sym.name.toTypeName)
@@ -974,8 +977,6 @@ trait TreehuggerDSLs { self: Forest =>
       in.toSeq map { x: A => (x: ImportSelector)}
     
     implicit def mkEnumeratorFromIfStart(ifs: IfStart): Enumerator = ifs.enumerator
-    implicit def mkEnumeratorFromValDef(tree: ValDef): Enumerator =
-      ForValDef(tree.name, tree.tpt, tree.rhs)
     implicit def mkDocElementFromString(str: String): DocElement = DocText(str)
   }
 }

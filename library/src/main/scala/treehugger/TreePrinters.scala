@@ -662,13 +662,11 @@ trait TreePrinters extends api.TreePrinters { self: Forest =>
             printColumn(enumerators, "{", "", "} ")
             print("yield "); print(body)
           }          
-        case ForValFrom(_, name, tp, rhs) =>
-          print(symName(tree, name))
-          printOpt(": ", tp)
+        case ForValFrom(_, lhs, rhs) =>
+          print(lhs)
           print(" <- ", rhs)  
-        case ForValDef(_, name, tp, rhs) =>
-          print(symName(tree, name))
-          printOpt(": ", tp)
+        case ForValDef(_, lhs, rhs) =>
+          print(lhs)
           print(" = ", rhs)  
         case ForFilter(_, test: Tree) =>
           print("if ", test)

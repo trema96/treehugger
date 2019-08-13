@@ -42,7 +42,7 @@ class TreePrinterSpec extends DSLSpec { def is = sequential                   ^
       assignGreetStrings(0, "Hello"),
       assignGreetStrings(1, ", "),
       assignGreetStrings(2, "world!\n"),
-      FOR(VALFROM("i") := LIT(0) INT_TO LIT(2)) DO
+      FOR(VALFROM(ID("i")) <-- (LIT(0) INT_TO LIT(2))) DO
         (Predef_print APPLY (greetStrings APPLY REF("i")))) withoutPackage
     
     val s = treeToString(tree); println(s)
@@ -74,7 +74,7 @@ class TreePrinterSpec extends DSLSpec { def is = sequential                   ^
           (IF(REF(cache) DOT "contains" APPLY REF(s)) THEN REF(cache).APPLY(REF(s)) 
           ELSE BLOCK(
             VAL("acc") := NEW(ChecksumAccumulator),
-            FOR(VALFROM("c") := REF(s)) DO
+            FOR(VALFROM(ID("c")) <-- REF(s)) DO
               (REF("acc") DOT "add" APPLY (REF("c") DOT "toByte")),
             VAL("cs") := REF("acc") DOT "checksum" APPLY (),
             REF(cache) INFIX ("+=") APPLY REF(s) INFIX ("->") APPLY REF("cs"),
